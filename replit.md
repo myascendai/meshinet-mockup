@@ -32,6 +32,12 @@ A Next.js 16 application with React 19, built using TypeScript and Tailwind CSS 
 - `components.json` - shadcn/ui component configuration
 
 ## Recent Changes
+- February 1, 2026: Meshi branding overhaul
+  - Added Meshi logo and favicon to public folder
+  - Created MeshiSidebar component with navigation and mock logout
+  - Updated globals.css with Meshi purple/magenta theme colors
+  - Refactored page layout to use shadcn sidebar pattern
+  - Updated metadata for Meshi branding
 - February 1, 2026: Initial Replit setup
   - Configured Next.js to bind to 0.0.0.0:5000
   - Added allowedDevOrigins for Replit proxy support

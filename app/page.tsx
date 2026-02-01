@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ActivitySummaryModal } from "@/components/activity-summary-modal"
@@ -12,9 +11,10 @@ import { AgentConfig } from "@/components/agent-config"
 import { TheEther } from "@/components/ether/the-ether"
 import { UserGoals } from "@/components/user-goals"
 import { AgentMemories } from "@/components/agent-memories"
-import { Activity, Network, Settings, Zap, BookOpen } from "lucide-react"
+import { Zap } from "lucide-react"
 import { IntegrityScoreDialog } from "@/components/integrity-score-dialog"
-import { NetworkGraph } from "@/components/network-graph" // Import NetworkGraph
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { MeshiSidebar } from "@/components/meshi-sidebar"
 
 const initialWorkflows = [
   {
@@ -121,8 +121,8 @@ export default function Dashboard() {
   const [statusText, setStatusText] = useState(statusMessages[0].text)
   const [statusIndex, setStatusIndex] = useState(0)
   const [showScoreDialog, setShowScoreDialog] = useState(false)
+  const [activeTab, setActiveTab] = useState("monitor")
 
-  // Cycle through agent statuses
   useEffect(() => {
     if (showModal) return
 
@@ -147,133 +147,103 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Activity Summary Modal */}
-      <ActivitySummaryModal 
-        isOpen={showModal} 
-        onSync={() => setShowModal(false)} 
-      />
+    <SidebarProvider>
+      <MeshiSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <SidebarInset>
+        <div className="min-h-screen bg-background">
+          <ActivitySummaryModal 
+            isOpen={showModal} 
+            onSync={() => setShowModal(false)} 
+          />
 
-      {/* Integrity Score Dialog */}
-      <IntegrityScoreDialog
-        score={98.4}
-        open={showScoreDialog}
-        onOpenChange={setShowScoreDialog}
-      />
+          <IntegrityScoreDialog
+            score={98.4}
+            open={showScoreDialog}
+            onOpenChange={setShowScoreDialog}
+          />
 
-      {/* Main Dashboard */}
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* Header */}
-        <header className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Your Agent</h1>
-              <p className="text-xs text-muted-foreground">Alex's Agent • Level 3 Automation</p>
-            </div>
+          <div className="container mx-auto px-4 py-6 max-w-7xl">
+            <header className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="md:hidden" />
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold text-foreground">Your Agent</h1>
+                  <p className="text-xs text-muted-foreground">Alex's Agent • Level 3 Automation</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Badge variant="outline" className="border-success/30 text-success">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success mr-2 animate-pulse" />
+                  Online
+                </Badge>
+                <button type="button" onClick={() => setShowScoreDialog(true)}>
+                  <Badge variant="outline" className="border-border text-muted-foreground font-mono hover:border-primary/50 hover:text-primary transition-colors cursor-pointer">
+                    Rep: 98.4
+                  </Badge>
+                </button>
+              </div>
+            </header>
+
+            {activeTab === "monitor" && (
+              <div className="space-y-6">
+                <UserGoals goals={userGoals} />
+
+                <div className="grid lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-1">
+                    <WorkflowLog items={initialWorkflows} />
+                  </div>
+
+                  <div className="lg:col-span-1">
+                    <Card className="bg-card/50 backdrop-blur border-border h-full flex flex-col">
+                      <CardContent className="flex-1 flex flex-col items-center justify-center py-8">
+                        <AgentOrb status={agentStatus} className="mb-6" />
+                        <p className="text-sm text-muted-foreground text-center max-w-[200px] font-mono">
+                          {statusText}
+                        </p>
+                        <div className="mt-4 flex gap-2">
+                          {["scanning", "negotiating", "filtering"].map((s) => (
+                            <div
+                              key={s}
+                              className={`w-2 h-2 rounded-full transition-all ${
+                                agentStatus === s ? "bg-primary" : "bg-muted"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="lg:col-span-1">
+                    <ActionQueue 
+                      items={actions} 
+                      onApprove={handleApprove}
+                      onReject={handleReject}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "network" && <TheEther />}
+
+            {activeTab === "memories" && <AgentMemories />}
+
+            {activeTab === "config" && (
+              <div className="max-w-2xl">
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold text-foreground">Agent Configuration</h2>
+                  <p className="text-sm text-muted-foreground">Customize your agent's behavior and capabilities</p>
+                </div>
+                <AgentConfig />
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="border-success/30 text-success">
-              <span className="w-1.5 h-1.5 rounded-full bg-success mr-2 animate-pulse" />
-              Online
-            </Badge>
-            <button type="button" onClick={() => setShowScoreDialog(true)}>
-              <Badge variant="outline" className="border-border text-muted-foreground font-mono hover:border-primary/50 hover:text-primary transition-colors cursor-pointer">
-                Rep: 98.4
-              </Badge>
-            </button>
-          </div>
-        </header>
-
-        {/* Tabs Navigation */}
-        <Tabs defaultValue="monitor" className="space-y-6">
-          <TabsList className="bg-card/50 border border-border">
-            <TabsTrigger value="monitor" className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-              <Activity className="w-4 h-4" />
-              <span className="hidden sm:inline">Live Monitor</span>
-            </TabsTrigger>
-            <TabsTrigger value="network" className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-              <Network className="w-4 h-4" />
-              <span className="hidden sm:inline">Network</span>
-            </TabsTrigger>
-            <TabsTrigger value="memories" className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-              <BookOpen className="w-4 h-4" />
-              <span className="hidden sm:inline">Memories</span>
-            </TabsTrigger>
-            <TabsTrigger value="config" className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Configure</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Live Monitor View */}
-          <TabsContent value="monitor" className="space-y-6">
-            {/* Your Goals - Prominent Section */}
-            <UserGoals goals={userGoals} />
-
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Left Panel - Workflow Log */}
-              <div className="lg:col-span-1">
-                <WorkflowLog items={initialWorkflows} />
-              </div>
-
-              {/* Center - Agent Orb */}
-              <div className="lg:col-span-1">
-                <Card className="bg-card/50 backdrop-blur border-border h-full flex flex-col">
-                  <CardContent className="flex-1 flex flex-col items-center justify-center py-8">
-                    <AgentOrb status={agentStatus} className="mb-6" />
-                    <p className="text-sm text-muted-foreground text-center max-w-[200px] font-mono">
-                      {statusText}
-                    </p>
-                    <div className="mt-4 flex gap-2">
-                      {["scanning", "negotiating", "filtering"].map((s) => (
-                        <div
-                          key={s}
-                          className={`w-2 h-2 rounded-full transition-all ${
-                            agentStatus === s ? "bg-primary" : "bg-muted"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Right Panel - Action Queue */}
-              <div className="lg:col-span-1">
-                <ActionQueue 
-                  items={actions} 
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                />
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Network / The Ether View */}
-          <TabsContent value="network">
-            <TheEther />
-          </TabsContent>
-
-          {/* Memories View */}
-          <TabsContent value="memories">
-            <AgentMemories />
-          </TabsContent>
-
-          {/* Configuration View */}
-          <TabsContent value="config">
-            <div className="max-w-2xl">
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold text-foreground">Agent Configuration</h2>
-                <p className="text-sm text-muted-foreground">Customize your agent's behavior and capabilities</p>
-              </div>
-              <AgentConfig />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
