@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Activity, Network, Settings, BookOpen, LogOut } from "lucide-react"
+import { Activity, Network, Settings, BookOpen, LogOut, PanelLeftClose } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar"
 
 interface MeshiSidebarProps {
@@ -44,26 +45,35 @@ const navItems = [
 ]
 
 export function MeshiSidebar({ activeTab, onTabChange }: MeshiSidebarProps) {
+  const { toggleSidebar } = useSidebar()
+  
   const handleLogout = () => {
     alert("Logout clicked - This is a mock logout action")
   }
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
+      <SidebarHeader className="p-4 flex-row items-center justify-between">
+        <div className="flex items-center gap-3 overflow-hidden">
           <Image
             src="/meshi-logo.png"
             alt="Meshi Logo"
             width={40}
             height={40}
-            className="rounded-lg"
+            className="rounded-lg shrink-0"
           />
-          <div>
-            <h1 className="text-lg font-semibold text-sidebar-foreground">Meshi</h1>
-            <p className="text-xs text-muted-foreground">AI Agent Dashboard</p>
+          <div className="min-w-0">
+            <h1 className="text-lg font-semibold text-sidebar-foreground truncate">Meshi</h1>
+            <p className="text-xs text-muted-foreground truncate">AI Agent Dashboard</p>
           </div>
         </div>
+        <button 
+          onClick={toggleSidebar}
+          className="p-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md transition-colors"
+          title="Collapse Sidebar"
+        >
+          <PanelLeftClose className="size-4" />
+        </button>
       </SidebarHeader>
 
       <SidebarSeparator />
