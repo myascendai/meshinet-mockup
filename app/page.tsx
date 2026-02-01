@@ -115,7 +115,20 @@ const statusMessages = [
 ]
 
 export default function Dashboard() {
-  const [showModal, setShowModal] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+
+  useEffect(() => {
+    const hasSeenBriefing = localStorage.getItem("hasSeenDailyBriefing")
+    if (!hasSeenBriefing) {
+      setShowModal(true)
+    }
+  }, [])
+
+  const handleModalSync = () => {
+    setShowModal(false)
+    localStorage.setItem("hasSeenDailyBriefing", "true")
+  }
+
   const [actions, setActions] = useState(initialActions)
   const [agentStatus, setAgentStatus] = useState<"scanning" | "negotiating" | "filtering" | "idle">("scanning")
   const [statusText, setStatusText] = useState(statusMessages[0].text)
@@ -153,7 +166,7 @@ export default function Dashboard() {
         <div className="min-h-screen bg-background">
           <ActivitySummaryModal 
             isOpen={showModal} 
-            onSync={() => setShowModal(false)} 
+            onSync={handleModalSync} 
           />
 
           <IntegrityScoreDialog
