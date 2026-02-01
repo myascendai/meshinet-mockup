@@ -17,28 +17,28 @@ const metrics = [
     label: "Focus Saved",
     value: "45 min",
     description: "Saved you 45 minutes of processing low-value content.",
-    color: "text-primary"
+    color: "text-cyan-500"
   },
   {
     icon: Shield,
     label: "Noise Filtered",
     value: "43",
     description: "Intrusions blocked (0 alerts generated).",
-    color: "text-destructive"
+    color: "text-rose-500"
   },
   {
     icon: Users,
     label: "Connections",
     value: "1 New",
     description: "High-priority opportunity identified.",
-    color: "text-accent"
+    color: "text-violet-500"
   },
   {
     icon: TrendingUp,
     label: "Reputation",
     value: "98.4",
     description: "Score stabilized. Verified attendance confirmed.",
-    color: "text-success"
+    color: "text-emerald-500"
   }
 ]
 

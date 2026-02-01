@@ -19,9 +19,9 @@ interface UserGoalsProps {
 }
 
 const priorityStyles = {
-  high: "border-destructive/40 bg-destructive/5 text-destructive",
-  medium: "border-accent/40 bg-accent/5 text-accent",
-  low: "border-primary/40 bg-primary/5 text-primary"
+  high: "border-rose-500/40 bg-rose-500/5 text-rose-500",
+  medium: "border-amber-500/40 bg-amber-500/5 text-amber-500",
+  low: "border-emerald-500/40 bg-emerald-500/5 text-emerald-500"
 }
 
 export function UserGoals({ goals, compact = false }: UserGoalsProps) {
@@ -124,9 +124,9 @@ export function UserGoals({ goals, compact = false }: UserGoalsProps) {
               <div 
                 className={cn(
                   "h-full rounded-full transition-all",
-                  goal.priority === "high" && "bg-destructive",
-                  goal.priority === "medium" && "bg-accent",
-                  goal.priority === "low" && "bg-primary"
+                  goal.priority === "high" && "bg-rose-500",
+                  goal.priority === "medium" && "bg-amber-500",
+                  goal.priority === "low" && "bg-emerald-500"
                 )}
                 style={{ width: `${goal.progress}%` }}
               />

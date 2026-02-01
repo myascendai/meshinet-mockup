@@ -29,6 +29,24 @@ const iconMap = {
   document: FileText
 }
 
+const typeStyles = {
+  reply: {
+    bg: "bg-blue-500/10",
+    text: "text-blue-500",
+    border: "hover:border-blue-500/50"
+  },
+  invite: {
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-500",
+    border: "hover:border-emerald-500/50"
+  },
+  document: {
+    bg: "bg-amber-500/10",
+    text: "text-amber-500",
+    border: "hover:border-amber-500/50"
+  }
+}
+
 export function ActionQueue({ items, onApprove, onReject }: ActionQueueProps) {
   const [animatingItems, setAnimatingItems] = useState<string[]>([])
   const [selectedAction, setSelectedAction] = useState<ActionItem | null>(null)
@@ -69,19 +87,22 @@ export function ActionQueue({ items, onApprove, onReject }: ActionQueueProps) {
               const Icon = iconMap[item.type]
               const isAnimating = animatingItems.includes(item.id)
               
+              const styles = typeStyles[item.type]
+              
               return (
                 <div
                   key={item.id}
                   className={cn(
                     "p-3 rounded-lg border border-border bg-secondary/30 transition-all duration-300",
-                    "hover:border-accent/50 hover:bg-accent/5 cursor-pointer",
+                    styles.border,
+                    "cursor-pointer",
                     isAnimating && "opacity-0 scale-95"
                   )}
                   onClick={() => handleViewDetails(item)}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-accent/10">
-                      <Icon className="w-4 h-4 text-accent" />
+                    <div className={cn("p-2 rounded-lg", styles.bg)}>
+                      <Icon className={cn("w-4 h-4", styles.text)} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">
