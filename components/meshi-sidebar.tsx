@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Activity, Network, Settings, BookOpen, LogOut, PanelLeftClose } from "lucide-react"
+import { Activity, Network, Settings, BookOpen, LogOut, PanelLeftClose, PanelLeft } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -45,35 +45,51 @@ const navItems = [
 ]
 
 export function MeshiSidebar({ activeTab, onTabChange }: MeshiSidebarProps) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state } = useSidebar()
+  const isCollapsed = state === "collapsed"
   
   const handleLogout = () => {
     alert("Logout clicked - This is a mock logout action")
   }
 
   return (
-    <Sidebar>
-      <SidebarHeader className="p-4 flex-row items-center justify-between">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <Image
-            src="/meshi-logo.png"
-            alt="Meshi Logo"
-            width={40}
-            height={40}
-            className="rounded-lg shrink-0"
-          />
-          <div className="min-w-0">
-            <h1 className="text-lg font-semibold text-sidebar-foreground truncate">Meshi</h1>
-            <p className="text-xs text-muted-foreground truncate">AI Agent Dashboard</p>
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="p-2">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <Image
+              src="/meshi-logo.png"
+              alt="Meshi Logo"
+              width={32}
+              height={32}
+              className="rounded-lg shrink-0"
+            />
+            {!isCollapsed && (
+              <div className="min-w-0">
+                <h1 className="text-lg font-semibold text-sidebar-foreground truncate">Meshi</h1>
+                <p className="text-xs text-muted-foreground truncate">AI Agent Dashboard</p>
+              </div>
+            )}
           </div>
+          {!isCollapsed && (
+            <button 
+              onClick={toggleSidebar}
+              className="p-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md transition-colors shrink-0"
+              title="Collapse Sidebar"
+            >
+              <PanelLeftClose className="size-4" />
+            </button>
+          )}
         </div>
-        <button 
-          onClick={toggleSidebar}
-          className="p-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md transition-colors"
-          title="Collapse Sidebar"
-        >
-          <PanelLeftClose className="size-4" />
-        </button>
+        {isCollapsed && (
+          <button 
+            onClick={toggleSidebar}
+            className="p-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md transition-colors w-full flex justify-center"
+            title="Expand Sidebar"
+          >
+            <PanelLeft className="size-4" />
+          </button>
+        )}
       </SidebarHeader>
 
       <SidebarSeparator />
